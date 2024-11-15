@@ -3,7 +3,7 @@ package repository
 import (
 	"errors"
 
-	"gitea.avtomig.uz/mydream/shared_service/common"
+	"git.sriss.uz/shared/shared_service/common"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )

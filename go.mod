@@ -1,4 +1,4 @@
-module gitea.avtomig.uz/mydream/shared_service
+module git.sriss.uz/shared/shared_service
 
 go 1.23.0
 

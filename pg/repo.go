@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"gitea.avtomig.uz/mydream/shared_service/response"
+	"git.sriss.uz/shared/shared_service/response"
 	"gorm.io/gorm"
 )
 
