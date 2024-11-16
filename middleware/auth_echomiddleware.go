@@ -9,13 +9,13 @@ import (
 
 type AuthEchoMiddleware[U jwt.IUser[T, E, K], T echo.Context, E, K any] struct {
 	jwtService   jwt.JwtService[U, T, E, K]
-	redisService redis.RedisService
+	redisService redis.Client
 	storage      E
 }
 
 func NewAuthEchoMiddleware[U jwt.IUser[T, E, K], T echo.Context, E, K any](
 	config jwt.JwtConfig,
-	redisService redis.RedisService,
+	redisService redis.Client,
 	storage E,
 ) *AuthEchoMiddleware[U, T, E, K] {
 
@@ -56,7 +56,7 @@ func (a *AuthEchoMiddleware[U, T, E, K]) BuildMiddleware(permissions ...K) echo.
 	}
 }
 
-func (a *AuthEchoMiddleware[U, T, E, K]) Redis() redis.RedisService {
+func (a *AuthEchoMiddleware[U, T, E, K]) Redis() redis.Client {
 	return a.redisService
 }
 

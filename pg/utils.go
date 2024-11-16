@@ -3,15 +3,14 @@ package repository
 import (
 	"errors"
 
-	"git.sriss.uz/shared/shared_service/common"
+	"git.sriss.uz/shared/shared_service/sharedutil"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 type (
-	Paginate = common.Paginate
+	Paginate = sharedutil.Paginate
 	Filter   = func(tx *gorm.DB) *gorm.DB
-	// PageResult[T any] response.PageData[T]
 )
 
 type pageEntity[T any] struct {

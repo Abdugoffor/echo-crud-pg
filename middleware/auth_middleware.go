@@ -11,14 +11,14 @@ import (
 )
 
 type AuthMiddleware[U jwt.IUser[T, E, K], T, E, K any] struct {
-	jwt          jwt.jwt[U, T, E, K]
-	redisService redis.RedisService
+	jwt          jwt.JwtService[U, T, E, K]
+	redisService redis.Client
 	db           *gorm.DB
 }
 
 func NewAuthMiddleware[U jwt.IUser[T, E, K], T, E, K any](
-	jwt jwt.jwt[U, T, E, K],
-	redisService redis.RedisService,
+	jwt jwt.JwtService[U, T, E, K],
+	redisService redis.Client,
 	db *gorm.DB,
 ) *AuthMiddleware[U, T, E, K] {
 	return &AuthMiddleware[U, T, E, K]{

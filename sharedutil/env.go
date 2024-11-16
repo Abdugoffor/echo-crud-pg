@@ -1,4 +1,4 @@
-package common
+package sharedutil
 
 import (
 	"github.com/caarlos0/env/v11"

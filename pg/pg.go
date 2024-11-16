@@ -3,46 +3,65 @@ package repository
 import (
 	"fmt"
 	"log"
+	"sync"
 
+	"git.sriss.uz/shared/shared_service/sharedutil"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var (
-	instance *gorm.DB
+	instances = make(map[string]*gorm.DB)
+	instance  *gorm.DB
+	mu        sync.Mutex
 )
 
-func DB(gormConfig *GormConfig, cfg ...ConnectionConfig) (*gorm.DB, error) {
+func Privary(gormConfig *GormConfig, cfg ...ConnectionConfig) *gorm.DB {
+	mu.Lock()
+	defer mu.Unlock()
 
-	if instance != nil {
+	if instance == nil {
+		instance = sharedutil.MustValue(newDB(gormConfig, cfg...))
+	}
+
+	return instance
+}
+
+func DBFactory(name string, gormConfig *GormConfig, cfg ...ConnectionConfig) (*gorm.DB, error) {
+	if name == "" {
+		name = "default"
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if instance, exists := instances[name]; exists {
 		return instance, nil
 	}
 
-	db, err := initDB(gormConfig, cfg...)
+	db, err := newDB(gormConfig, cfg...)
 	{
 		if err != nil {
 			return nil, err
 		}
-
-		instance = db
 	}
 
-	return instance, nil
+	instances[name] = db
+	return db, nil
 }
 
-func Must(gormConfig *GormConfig, cfg ...ConnectionConfig) *gorm.DB {
-	db, err := DB(gormConfig, cfg...)
+func Must(name string, gormConfig *GormConfig, cfg ...ConnectionConfig) *gorm.DB {
+	db, err := DBFactory(name, gormConfig, cfg...)
 	{
 		if err != nil {
-			log.Fatalf("Failed to initialize database: %v", err)
+			log.Fatalf("Failed to initialize database connection [%s]: %v", name, err)
 		}
 	}
 
 	return db
 }
 
-func initDB(gormConfig *GormConfig, cfg ...ConnectionConfig) (*gorm.DB, error) {
-
+func newDB(gormConfig *GormConfig, cfg ...ConnectionConfig) (*gorm.DB, error) {
 	config := defaultConfig
 	{
 		if len(cfg) > 0 {

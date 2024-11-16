@@ -1,4 +1,4 @@
-package common
+package sharedutil
 
 func MustValue[T any](v T, err error) T {
 	if err != nil {
