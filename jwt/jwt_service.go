@@ -10,11 +10,11 @@ import (
 
 type IUser[T, E, K any] interface {
 	ID() int64
-	Pre(T, E, ...K) error
+	Pre(T, E, ...K) (bool, error)
 }
 
 type Payload[U IUser[T, E, K], T, E, K any] struct {
-	User U `json:"user"`
+	User U `json:"user" xml:"user"`
 	jwt.RegisteredClaims
 }
 

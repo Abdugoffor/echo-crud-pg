@@ -127,12 +127,12 @@ func (h *httpError) send() error {
 			return echo.NewHTTPError(h.status)
 		}
 	}
-
 	switch e := err.(type) {
 	case error:
 		return echo.NewHTTPError(h.status, ErrorResponse(e.Error()))
+	default:
+		return echo.NewHTTPError(h.status, ErrorResponse(err))
 	}
-	return echo.NewHTTPError(h.status, ErrorResponse(err))
 }
 
 func (h *httpError) BadRequest() error {

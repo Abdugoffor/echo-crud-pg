@@ -43,11 +43,16 @@ func (a *AuthEchoMiddleware[U, T, E, K]) BuildMiddleware(permissions ...K) echo.
 			user, err := a.jwtService.ParseTokenWithExpired(token)
 			{
 				if err != nil {
-					return response.HTTPError(err).Unauthorized()
+					return response.HTTPError(err.Error()).Unauthorized()
 				}
 			}
 
-			if err := user.Pre(ctx.(T), a.storage, permissions...); err != nil {
+			if isForbidden, err := user.Pre(ctx.(T), a.storage, permissions...); err != nil {
+
+				if isForbidden {
+					return response.HTTPError(err).Forbidden()
+				}
+
 				return response.HTTPError(err).Unauthorized()
 			}
 
