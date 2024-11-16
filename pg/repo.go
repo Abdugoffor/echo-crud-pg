@@ -1,4 +1,4 @@
-package repository
+package pg
 
 import (
 	"git.sriss.uz/shared/shared_service/response"

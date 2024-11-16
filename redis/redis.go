@@ -70,6 +70,7 @@ func (s *Client) Set(key string, value any) error {
 }
 
 func (s *Client) Get(key string) (any, error) {
+
 	val, err := s.Redis().Get(context.Background(), key).Result()
 	{
 		if err != nil {
@@ -78,6 +79,10 @@ func (s *Client) Get(key string) (any, error) {
 	}
 
 	return val, nil
+}
+
+func (s *Client) Del(key string) error {
+	return s.Redis().Del(context.Background(), key).Err()
 }
 
 func (s *Client) Redis() *redis.Client {
