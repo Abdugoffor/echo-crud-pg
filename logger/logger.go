@@ -3,9 +3,10 @@ package logger
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"runtime"
+	"sync"
+	"time"
 )
 
 const (
@@ -27,39 +28,60 @@ type Logger interface {
 	Fatal(v ...any)
 	Panic(v ...any)
 	Print(v ...any)
-	Printf(format string, v ...any)
 	Println(v ...any)
 }
 
 type logger struct {
-	errorLogger   *log.Logger
-	infoLogger    *log.Logger
-	debugLogger   *log.Logger
-	traceLogger   *log.Logger
-	fatalLogger   *log.Logger
-	panicLogger   *log.Logger
-	defaultLogger *log.Logger
+	prefixError []byte
+	prefixInfo  []byte
+	prefixDebug []byte
+	prefixTrace []byte
+	prefixFatal []byte
+	prefixPanic []byte
+	writer      io.Writer
+	pool        *Pool[[]byte] // Пул строк для логирования
+}
+
+type Pool[T any] struct {
+	pool sync.Pool
+}
+
+func NewPool[T any]() *Pool[T] {
+	return &Pool[T]{
+		pool: sync.Pool{
+			New: func() any {
+				return new(T)
+			},
+		},
+	}
+}
+
+func (p *Pool[T]) Get() *T {
+	return p.pool.Get().(*T)
+}
+
+func (p *Pool[T]) Put(item *T) {
+	p.pool.Put(item)
 }
 
 func NewWithWriter(out io.Writer) Logger {
 
-	flag := log.Lmsgprefix
-
-	color := func(c, prefix string) string {
+	color := func(c, prefix string) []byte {
 		if os.Stdout == out {
-			return fmt.Sprintf("%s%s: %s", c, prefix, colorReset)
+			return []byte(fmt.Sprintf("%s%s: %s", c, prefix, colorReset))
 		}
-		return fmt.Sprintf("%s: ", prefix)
+		return []byte(fmt.Sprintf("%s: ", prefix))
 	}
 
 	return &logger{
-		errorLogger:   log.New(out, color(colorRed, "ERROR"), flag),
-		infoLogger:    log.New(out, color(colorGreen, "INFO"), flag),
-		debugLogger:   log.New(out, color(colorYellow, "DEBUG"), flag),
-		traceLogger:   log.New(out, color(colorBlue, "TRACE"), flag),
-		fatalLogger:   log.New(out, color(colorPurple, "FATAL"), flag),
-		panicLogger:   log.New(out, color(colorCyan, "PANIC"), flag),
-		defaultLogger: log.New(out, "", flag),
+		prefixError: color(colorRed, "ERROR"),
+		prefixInfo:  color(colorGreen, "INFO"),
+		prefixDebug: color(colorYellow, "DEBUG"),
+		prefixTrace: color(colorBlue, "TRACE"),
+		prefixFatal: color(colorPurple, "FATAL"),
+		prefixPanic: color(colorCyan, "PANIC"),
+		writer:      out,
+		pool:        NewPool[[]byte](),
 	}
 }
 
@@ -67,56 +89,67 @@ func New() Logger {
 	return NewWithWriter(os.Stdout)
 }
 
-func (l *logger) logWithCaller(logger *log.Logger, v ...any) {
+func (l *logger) logWithCaller(prefix []byte, v ...any) {
+	// Получаем информацию о файле и строке
 	_, file, line, ok := runtime.Caller(2)
 	if ok {
-		prefix := fmt.Sprintf("%s:%d", file, line)
-		logger.Println(append([]any{prefix}, v...)...)
+		// Форматируем строку с файлом, строкой и временем
+		timestamp := time.Now().Format("2006-01-02 15:04:05")
+		prefixFile := fmt.Sprintf("%s[%s] %s:%d ", timestamp, prefix, file, line)
+		// Получаем строку из пула
+		buf := l.pool.Get()
+		// Собираем сообщение
+		*buf = append(*buf, []byte(prefixFile)...)
+		*buf = append(*buf, fmt.Sprint(v...)...)
+		// Печатаем сообщение
+		fmt.Fprintln(l.writer, string(*buf))
+		// Возвращаем строку в пул
+		l.pool.Put(buf)
 	} else {
-		logger.Println(v...)
+		// Если не удалось получить информацию о файле/строке
+		timestamp := time.Now().Format("2006-01-02 15:04:05")
+		// Получаем строку из пула
+		buf := l.pool.Get()
+		// Собираем сообщение
+		*buf = append(*buf, []byte(fmt.Sprintf("%s[%s] ", timestamp, prefix))...)
+		*buf = append(*buf, fmt.Sprint(v...)...)
+		// Печатаем сообщение
+		fmt.Fprintln(l.writer, string(*buf))
+		// Возвращаем строку в пул
+		l.pool.Put(buf)
 	}
 }
 
 func (l *logger) Error(v ...any) {
-	l.logWithCaller(l.errorLogger, v...)
+	l.logWithCaller(l.prefixError, v...)
 }
 
 func (l *logger) Info(v ...any) {
-	l.logWithCaller(l.infoLogger, v...)
+	l.logWithCaller(l.prefixInfo, v...)
 }
 
 func (l *logger) Debug(v ...any) {
-	l.logWithCaller(l.debugLogger, v...)
+	l.logWithCaller(l.prefixDebug, v...)
 }
 
 func (l *logger) Trace(v ...any) {
-	l.logWithCaller(l.traceLogger, v...)
+	l.logWithCaller(l.prefixTrace, v...)
 }
 
 func (l *logger) Fatal(v ...any) {
-	l.logWithCaller(l.fatalLogger, v...)
+	l.logWithCaller(l.prefixFatal, v...)
 	os.Exit(1)
 }
 
 func (l *logger) Panic(v ...any) {
-	l.logWithCaller(l.panicLogger, v...)
+	l.logWithCaller(l.prefixPanic, v...)
 	panic(fmt.Sprint(v...))
 }
 
 func (l *logger) Print(v ...any) {
-	l.logWithCaller(l.defaultLogger, v...)
-}
-
-func (l *logger) Printf(format string, v ...any) {
-	_, file, line, ok := runtime.Caller(2)
-	if ok {
-		prefix := fmt.Sprintf("%s:%d: ", file, line)
-		l.defaultLogger.Printf(prefix+format, v...)
-	} else {
-		l.defaultLogger.Printf(format, v...)
-	}
+	l.logWithCaller([]byte{}, v...)
 }
 
 func (l *logger) Println(v ...any) {
-	l.logWithCaller(l.defaultLogger, v...)
+	l.logWithCaller([]byte{}, v...)
 }

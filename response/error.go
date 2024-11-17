@@ -9,7 +9,6 @@ import (
 type HttpError interface {
 	Code(int) HttpError
 	Send() error
-
 	send() error
 	// 400 - Bad Request
 	BadRequest() error
@@ -46,7 +45,6 @@ type HttpError interface {
 	// 416 - Requested Range Not Satisfiable
 	RequestedRangeNotSatisfiable() error
 	// 417 - Expectation Failed
-
 	// 419 - Session Expired
 	SessionExpired() error
 	ExpectationFailed() error

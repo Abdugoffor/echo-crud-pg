@@ -1,12 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"log"
 	"os"
-	"runtime"
 
 	"git.sriss.uz/shared/shared_service/logger"
+	"git.sriss.uz/shared/shared_service/response"
+	"github.com/labstack/echo/v4"
 )
 
 type (
@@ -23,19 +24,50 @@ type Ints []int
 
 type Int int
 
+type WW struct {
+}
+
+func (w WW) Write(p []byte) (n int, err error) {
+	println(string(p))
+	return 0, nil
+}
+
 func main() {
-
 	f, _ := os.OpenFile("test.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
 	defer f.Close()
 
-	l := logger.New()
+	l := logger.NewWithWriter(f)
 
-	l.Info("Hello World!")
-	l.Debug("Hello World!")
-	l.Error("Hello World!")
-	l.Trace("Hello World!")
-	l.Println("Hello World!")
+	l.Println("Hello world")
+
+	e := echo.New()
+
+	e.Pre(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+
+			c.Response().Before(func() {
+				println(c.Path())
+				// println("before response")
+			})
+
+			c.Response().After(func() {
+				// println("after response")
+			})
+
+			return next(c)
+		}
+	})
+
+	e.GET("/a", func(c echo.Context) error {
+		return response.HTTPError(errors.New("error")).BadRequest()
+		// return c.String(http.StatusOK, "Hello, World!")
+	})
+
+	e.GET("/", func(c echo.Context) error {
+		return response.HTTPError(errors.New("error")).BadRequest()
+		// return c.String(http.StatusOK, "Hello, World!")
+	})
+	e.Start(":8080")
 }
 
 // type Point struct {
@@ -50,12 +82,3 @@ func main() {
 // log.Println(n)
 // log.Println(err)
 // log.Println(p)
-
-func exampleFunction() {
-	pc, file, line, ok := runtime.Caller(1)
-	if ok {
-		function := runtime.FuncForPC(pc)
-		fmt.Println(function.FileLine(pc))
-		fmt.Printf("Function: %s\nFile: %s\nLine: %d\n", function.Name(), file, line)
-	}
-}
