@@ -5,12 +5,44 @@ import (
 	"runtime"
 )
 
-func CurrentDir() string {
-	_, filename, _, _ := runtime.Caller(1)
+func Dirname() string {
+	_, filename, _, ok := runtime.Caller(1)
+
+	if !ok {
+		return ""
+	}
+
 	return path.Dir(filename)
 }
 
-func CurrentFile() string {
-	_, filename, _, _ := runtime.Caller(1)
+func Filename() string {
+	_, filename, _, ok := runtime.Caller(1)
+
+	if !ok {
+		return ""
+	}
+
 	return filename
+}
+
+func Basename() string {
+	_, filename, _, ok := runtime.Caller(1)
+
+	if !ok {
+		return ""
+	}
+
+	return path.Base(filename)
+}
+
+func FunctionName() string {
+	pc, _, _, ok := runtime.Caller(1)
+
+	if !ok {
+		return ""
+	}
+
+	fn := runtime.FuncForPC(pc)
+
+	return fn.Name()
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 
@@ -10,6 +11,7 @@ import (
 	"git.sriss.uz/shared/shared_service/response"
 	"git.sriss.uz/shared/shared_service/sharedutil"
 	"github.com/labstack/echo/v4"
+	"github.com/xuri/excelize/v2"
 )
 
 type (
@@ -35,6 +37,10 @@ func (w WW) Write(p []byte) (n int, err error) {
 }
 
 func main() {
+
+	Excel()
+
+	return
 
 	f, _ := os.OpenFile("test.pdf", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	defer f.Close()
@@ -76,6 +82,58 @@ func main() {
 		// return c.String(http.StatusOK, "Hello, World!")
 	})
 	e.Start(":8080")
+}
+
+func Excel() {
+	// Создаём новый Excel-файл
+	f := excelize.NewFile()
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println("Ошибка закрытия файла:", err)
+		}
+	}()
+
+	// Заполняем строки данными
+	rows := [][]interface{}{
+		{"A", "B", "C"}, // Заголовок
+		{1, 2},          // Данные
+	}
+
+	for idx, row := range rows {
+		cell := fmt.Sprintf("A%d", idx+1)
+		if err := f.SetSheetRow("Sheet1", cell, &row); err != nil {
+			fmt.Println("Ошибка установки строки:", err)
+			return
+		}
+	}
+
+	// Добавляем таблицу
+	table := excelize.Table{
+		Range:     "A1:C2",
+		Name:      "Table1",
+		StyleName: "TableStyleMedium2",
+	}
+	if err := f.AddTable("Sheet1", &table); err != nil {
+		fmt.Println("Ошибка добавления таблицы:", err)
+		return
+	}
+
+	// Устанавливаем формулу для ячейки C2
+	formulaType := excelize.STCellFormulaTypeDataTable
+	if err := f.SetCellFormula(
+		"Sheet1", "C2",
+		// "SUM(A2:B2)",
+		"SUM(Table[[A]:[B]])",
+		excelize.FormulaOpts{Type: &formulaType},
+	); err != nil {
+		fmt.Println("Ошибка установки формулы:", err)
+		return
+	}
+
+	// Сохраняем файл
+	if err := f.SaveAs("Book1.xlsx"); err != nil {
+		fmt.Println("Ошибка сохранения файла:", err)
+	}
 }
 
 // type Point struct {
