@@ -30,37 +30,38 @@ var _ HttpSuccess = (*response)(nil)
 func (r *response) OK(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusOK)
+		return r.ctx.JSON(http.StatusOK, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusOK, data)
+	return r.ctx.NoContent(http.StatusOK)
+
 }
 
 func (r *response) Created(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusCreated)
+		return r.ctx.JSON(http.StatusCreated, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusCreated, data)
+	return r.ctx.NoContent(http.StatusCreated)
 }
 
 func (r *response) Accepted(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusAccepted)
+		return r.ctx.JSON(http.StatusAccepted, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusAccepted, data)
+	return r.ctx.NoContent(http.StatusAccepted)
 }
 
 func (r *response) NonAuthoritativeInfo(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusNonAuthoritativeInfo)
+		return r.ctx.JSON(http.StatusNonAuthoritativeInfo, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusNonAuthoritativeInfo, data)
+	return r.ctx.NoContent(http.StatusNonAuthoritativeInfo)
 }
 
 func (r *response) NoContent() error {
@@ -70,44 +71,44 @@ func (r *response) NoContent() error {
 func (r *response) ResetContent(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusResetContent)
+		return r.ctx.JSON(http.StatusResetContent, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusResetContent, data)
+	return r.ctx.NoContent(http.StatusResetContent)
 }
 
 func (r *response) PartialContent(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusPartialContent)
+		return r.ctx.JSON(http.StatusPartialContent, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusPartialContent, data)
+	return r.ctx.NoContent(http.StatusPartialContent)
 }
 
 func (r *response) MultiStatus(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusMultiStatus)
+		return r.ctx.JSON(http.StatusMultiStatus, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusMultiStatus, data)
+	return r.ctx.NoContent(http.StatusMultiStatus)
 }
 
 func (r *response) AlreadyReported(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusAlreadyReported)
+		return r.ctx.JSON(http.StatusAlreadyReported, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusAlreadyReported, data)
+	return r.ctx.NoContent(http.StatusAlreadyReported)
 }
 
 func (r *response) IMUsed(data ...any) error {
 
 	if len(data) > 0 {
-		return r.ctx.NoContent(http.StatusIMUsed)
+		return r.ctx.JSON(http.StatusIMUsed, data[0])
 	}
 
-	return r.ctx.JSON(http.StatusIMUsed, data)
+	return r.ctx.NoContent(http.StatusIMUsed)
 }

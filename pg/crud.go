@@ -1,6 +1,7 @@
 package pg
 
 import (
+	"git.sriss.uz/shared/shared_service/request"
 	"git.sriss.uz/shared/shared_service/response"
 	"gorm.io/gorm"
 )
@@ -8,7 +9,7 @@ import (
 var _ Crud[any] = (*curd[any])(nil)
 
 type CreateInterface[T any] interface {
-	Create(columns ...string) (*T, error)
+	Create(data *T, columns ...string) (*T, error)
 }
 
 type DeleteInterface[T any] interface {
@@ -18,11 +19,25 @@ type DeleteInterface[T any] interface {
 type FindInterface[T any] interface {
 	Find(filter ...Filter) ([]T, error)
 	FindOne(filter ...Filter) (T, error)
-	Page(paginate *Paginate, filter ...Filter) (*response.PageData[T], error)
+	Page(paginate *request.Paginate, filter ...Filter) (*response.PageData[T], error)
 }
 
 type UpdateInterface[T any] interface {
 	Update(dto any, filter Filter, columns ...string) (*T, error)
+}
+
+type CreateWithScanInterface[T, E any] interface {
+	CreateWithScan(data *T, columns ...string) (*T, error)
+}
+
+type UpdateWithScanInterface[T, E any] interface {
+	UpdateWithScan(dto any, filter Filter, columns ...string) (*T, error)
+}
+
+type FindWithScanInterface[T, E any] interface {
+	FindWithScan(filter ...Filter) ([]T, error)
+	FindOneWithScan(filter ...Filter) (T, error)
+	PageWithScan(paginate *request.Paginate, filter ...Filter) (*response.PageData[T], error)
 }
 
 type Crud[T any] interface {
@@ -41,21 +56,16 @@ type curd[T any] struct {
 	db *gorm.DB
 }
 
-func (r *curd[T]) Create(columns ...string) (*T, error) {
-
-	var model = new(T)
-	{
-		if err := Create[T](r.db, new(T), columns...); err != nil {
-			return nil, err
-		}
+func (r *curd[T]) Create(data *T, columns ...string) (*T, error) {
+	if err := Create[T](r.db, data, columns...); err != nil {
+		return nil, err
 	}
 
-	return model, nil
+	return data, nil
 }
 
 func (r *curd[T]) Delete(filter Filter, columns ...string) (*T, error) {
-
-	var model = new(T)
+	model := new(T)
 	{
 		if err := Delete[T](r.db, model, filter, columns...); err != nil {
 			return nil, err
@@ -73,7 +83,7 @@ func (r *curd[T]) FindOne(filter ...Filter) (T, error) {
 	return FindOne[T](r.db, filter...)
 }
 
-func (r *curd[T]) Page(paginate *Paginate, filter ...Filter) (*response.PageData[T], error) {
+func (r *curd[T]) Page(paginate *request.Paginate, filter ...Filter) (*response.PageData[T], error) {
 	return Page[T](r.db, paginate, filter...)
 }
 

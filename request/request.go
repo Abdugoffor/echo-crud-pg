@@ -1,6 +1,7 @@
 package request
 
 import (
+	"context"
 	"errors"
 	"strconv"
 	"strings"
@@ -24,6 +25,10 @@ func Request(ctx echo.Context) *request {
 type request struct {
 	ctx    echo.Context
 	binder echo.DefaultBinder
+}
+
+func (r *request) Context() context.Context {
+	return r.ctx.Request().Context()
 }
 
 func (r *request) BindParam(in any) error {

@@ -1,6 +1,7 @@
 package pg
 
 import (
+	"git.sriss.uz/shared/shared_service/request"
 	"git.sriss.uz/shared/shared_service/response"
 	"gorm.io/gorm"
 )
@@ -9,10 +10,8 @@ func query[T any](db *gorm.DB, filter ...Filter) *gorm.DB {
 	return db.Model(new(T)).Scopes(filter...)
 }
 
-func page[T any, E any](db *gorm.DB, paginate *Paginate, filter ...Filter) *gorm.DB {
-
+func page[T any, E any](db *gorm.DB, paginate *request.Paginate, filter ...Filter) *gorm.DB {
 	totalFilter := func(tx *gorm.DB) *gorm.DB {
-
 		selects := tx.Statement.Selects
 		{
 			if len(selects) == 0 {
@@ -39,7 +38,7 @@ func page[T any, E any](db *gorm.DB, paginate *Paginate, filter ...Filter) *gorm
 		Limit(paginate.Limit())
 }
 
-func pageResult[T any](pageEntities []pageEntity[T], paginate *Paginate) *response.PageData[T] {
+func pageResult[T any](pageEntities []pageEntity[T], paginate *request.Paginate) *response.PageData[T] {
 	var (
 		total      int64
 		totalPages int64 = int64(len(pageEntities))
@@ -50,7 +49,7 @@ func pageResult[T any](pageEntities []pageEntity[T], paginate *Paginate) *respon
 		total = pageEntity.Total
 	}
 
-	var entities = make([]T, 0, totalPages)
+	entities := make([]T, 0, totalPages)
 	{
 		for _, pageEntity := range pageEntities {
 			entities = append(entities, pageEntity.Data)
@@ -67,7 +66,6 @@ func pageResult[T any](pageEntities []pageEntity[T], paginate *Paginate) *respon
 }
 
 func FindOne[T any](db *gorm.DB, filter ...Filter) (T, error) {
-
 	var entity T
 	{
 		if err := query[T](db, filter...).
@@ -80,7 +78,6 @@ func FindOne[T any](db *gorm.DB, filter ...Filter) (T, error) {
 }
 
 func Find[T any](db *gorm.DB, filter ...Filter) ([]T, error) {
-
 	var entites []T
 	{
 		if err := query[T](db, filter...).
@@ -92,8 +89,7 @@ func Find[T any](db *gorm.DB, filter ...Filter) ([]T, error) {
 	return entites, nil
 }
 
-func Page[T any](db *gorm.DB, paginate *Paginate, filter ...Filter) (*response.PageData[T], error) {
-
+func Page[T any](db *gorm.DB, paginate *request.Paginate, filter ...Filter) (*response.PageData[T], error) {
 	var pageEntities []pageEntity[T]
 	{
 		result := page[T, T](db, paginate, filter...).
@@ -108,7 +104,6 @@ func Page[T any](db *gorm.DB, paginate *Paginate, filter ...Filter) (*response.P
 }
 
 func Create[T any](db *gorm.DB, entity *T, columns ...string) error {
-
 	var tx *gorm.DB
 	{
 		if len(columns) > 0 {
@@ -129,7 +124,6 @@ func Create[T any](db *gorm.DB, entity *T, columns ...string) error {
 }
 
 func Update[T any, E any](db *gorm.DB, dto E, filter Filter, columns ...string) (*T, error) {
-
 	var tx *gorm.DB
 	{
 		if len(columns) > 0 {
@@ -139,10 +133,10 @@ func Update[T any, E any](db *gorm.DB, dto E, filter Filter, columns ...string) 
 		}
 	}
 
-	var model = new(T)
+	model := new(T)
 	{
 
-		result := query[T](tx, filter).Updates(dto)
+		result := tx.Model(&model).Scopes(filter).Updates(dto)
 		{
 			if err := result.Error; err != nil {
 				return nil, err
@@ -159,7 +153,6 @@ func Update[T any, E any](db *gorm.DB, dto E, filter Filter, columns ...string) 
 }
 
 func Delete[T any](db *gorm.DB, entity *T, filter Filter, columns ...string) error {
-
 	var tx *gorm.DB
 	{
 		if len(columns) > 0 {
@@ -169,27 +162,25 @@ func Delete[T any](db *gorm.DB, entity *T, filter Filter, columns ...string) err
 		}
 	}
 
-	var model T
+	if entity != nil {
+		entity = new(T)
+	}
+
+	result := query[T](tx, filter).Delete(&entity)
 	{
-
-		result := query[T](tx, filter).Delete(&model)
-		{
-			if err := result.Error; err != nil {
-				return err
-			}
-
-			if result.RowsAffected == 0 {
-				return gorm.ErrRecordNotFound
-			}
+		if err := result.Error; err != nil {
+			return err
 		}
 
+		if result.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound
+		}
 	}
 
 	return nil
 }
 
 func FindOneWithScan[T any, E any](db *gorm.DB, filter ...Filter) (*E, error) {
-
 	var entity E
 	{
 		result := query[T](db, filter...).Scan(&entity)
@@ -209,7 +200,6 @@ func FindOneWithScan[T any, E any](db *gorm.DB, filter ...Filter) (*E, error) {
 }
 
 func FindWithScan[T any, E any](db *gorm.DB, filter ...Filter) ([]E, error) {
-
 	var entites []E
 	{
 		result := query[T](db, filter...).Scan(&entites)
@@ -224,8 +214,7 @@ func FindWithScan[T any, E any](db *gorm.DB, filter ...Filter) ([]E, error) {
 	return entites, nil
 }
 
-func PageWithScan[T any, E any](db *gorm.DB, paginate *Paginate, filter ...Filter) (*response.PageData[E], error) {
-
+func PageWithScan[T any, E any](db *gorm.DB, paginate *request.Paginate, filter ...Filter) (*response.PageData[E], error) {
 	var pageEntities []pageEntity[E]
 	{
 		result := page[T, E](db, paginate, filter...).
@@ -240,7 +229,6 @@ func PageWithScan[T any, E any](db *gorm.DB, paginate *Paginate, filter ...Filte
 }
 
 func Count[T any](db *gorm.DB, filter ...Filter) (int64, error) {
-
 	var count int64
 	{
 		tx := query[T](db, filter...)
@@ -254,7 +242,6 @@ func Count[T any](db *gorm.DB, filter ...Filter) (int64, error) {
 }
 
 func Exists[T any](db *gorm.DB, filter ...Filter) (bool, error) {
-
 	count, err := Count[T](db, filter...)
 	{
 		if err != nil {

@@ -23,11 +23,11 @@ type JwtService[U IUser[T, E, K], T, E, K any] interface {
 	ParseTokenWithExpired(string) (U, error)
 	ParseTokenWithGracePeriod(token string, grace int64) (U, error)
 	Token(U) (string, error)
-	Config() JwtConfig
+	Config() *JwtConfig
 }
 
 type jwtService[U IUser[T, E, K], T, E, K any] struct {
-	config JwtConfig
+	config *JwtConfig
 }
 
 func (j *jwtService[U, T, E, K]) Token(user U) (string, error) {
@@ -73,11 +73,11 @@ func (j *jwtService[U, T, E, K]) ParseTokenWithGracePeriod(token string, grace i
 	return payload.User, nil
 }
 
-func (j *jwtService[U, T, E, K]) Config() JwtConfig {
+func (j *jwtService[U, T, E, K]) Config() *JwtConfig {
 	return j.config
 }
 
-func NewJwtService[U IUser[T, E, K], T, E, K any](config JwtConfig) JwtService[U, T, E, K] {
+func NewJwtService[U IUser[T, E, K], T, E, K any](config *JwtConfig) JwtService[U, T, E, K] {
 	return &jwtService[U, T, E, K]{
 		config: config,
 	}

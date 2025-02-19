@@ -16,7 +16,7 @@ var (
 	mu        sync.Mutex
 )
 
-func Privary(gormConfig *GormConfig, cfg ...ConnectionConfig) *gorm.DB {
+func Primary(gormConfig *GormConfig, cfg ...ConnectionConfig) *gorm.DB {
 	mu.Lock()
 	defer mu.Unlock()
 
