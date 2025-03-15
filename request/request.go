@@ -14,6 +14,7 @@ const (
 	Authorization            = "Authorization"
 	Bearer                   = "Bearer "
 	AuthUser                 = "__@@AUTH_USER@@__"
+	RequestData              = "__@@REQUEST_DATA@@__"
 )
 
 func Request(ctx echo.Context) *request[any] {
@@ -40,6 +41,14 @@ func (r *request[T]) AuthUser() *T {
 	u, _ := r.ctx.Get(AuthUser).(*T)
 
 	return u
+}
+
+func (r *request[T]) SetData(data any) {
+	r.ctx.Set(RequestData, data)
+}
+
+func (r *request[T]) Data() any {
+	return r.ctx.Get(RequestData)
 }
 
 func (r *request[T]) EchoContext() echo.Context {

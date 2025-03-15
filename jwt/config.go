@@ -1,9 +1,9 @@
 package jwt
 
 type JwtConfig struct {
-	Secret         string
-	Expired        int64
-	RefreshExpired int64
+	Secret         string `json:"secret" env:"SECRET"`
+	Expired        int64  `json:"expired" env:"EXPIRED"`
+	RefreshExpired int64  `json:"refreshExpired" env:"REFRESH_EXPIRED"`
 }
 
 func (j *JwtConfig) SecretData() string {
