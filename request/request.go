@@ -13,6 +13,7 @@ const (
 	UnAuthorizedErrorMessage = "unauthorized"
 	Authorization            = "Authorization"
 	Bearer                   = "Bearer "
+	AuthUser                 = "__@@AUTH_USER@@__"
 )
 
 func Request(ctx echo.Context) *request[any] {
@@ -29,6 +30,20 @@ func RequestWithData[T any](ctx echo.Context) *request[T] {
 type request[T any] struct {
 	ctx    echo.Context
 	binder echo.DefaultBinder
+}
+
+func (r *request[T]) SetUser(user *T) {
+	r.ctx.Set(AuthUser, user)
+}
+
+func (r *request[T]) AuthUser() *T {
+	u, _ := r.ctx.Get(AuthUser).(*T)
+
+	return u
+}
+
+func (r *request[T]) EchoContext() echo.Context {
+	return r.ctx
 }
 
 func (r *request[T]) Context() context.Context {
