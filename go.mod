@@ -1,8 +1,9 @@
 module git.sriss.uz/shared/shared_service
 
-go 1.24.0
+go 1.24.1
 
 require (
+	gitea.avtomig.uz/shared/shared_service v0.0.0-20250314215610-97a65dc15db0
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/chromedp/cdproto v0.0.0-20241022234722-4d5d5faf59fb
 	github.com/chromedp/chromedp v0.11.2
@@ -13,6 +14,7 @@ require (
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/xuri/excelize/v2 v2.9.0
 	golang.org/x/exp v0.0.0-20241004190924-225e2abe05e6
+	golang.org/x/mod v0.24.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.12
 )
@@ -48,7 +50,7 @@ require (
 	github.com/xuri/nfp v0.0.0-20240318013403-ab9948c2c4a7 // indirect
 	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 )

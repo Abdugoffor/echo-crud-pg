@@ -2,162 +2,162 @@ package request
 
 import "git.sriss.uz/shared/shared_service/response"
 
-func (r *request) BadRequest(err ...any) error {
+func (r *request[T]) BadRequest(err ...any) error {
 	return response.HTTPError(err...).BadRequest()
 }
 
-func (r *request) Unauthorized(err ...any) error {
+func (r *request[T]) Unauthorized(err ...any) error {
 	return response.HTTPError(err...).Unauthorized()
 }
 
-func (r *request) PaymentRequired(err ...any) error {
+func (r *request[T]) PaymentRequired(err ...any) error {
 	return response.HTTPError(err...).PaymentRequired()
 }
 
-func (r *request) Forbidden(err ...any) error {
+func (r *request[T]) Forbidden(err ...any) error {
 	return response.HTTPError(err...).Forbidden()
 }
 
-func (r *request) NotFound(err ...any) error {
+func (r *request[T]) NotFound(err ...any) error {
 	return response.HTTPError(err...).NotFound()
 }
 
-func (r *request) MethodNotAllowed(err ...any) error {
+func (r *request[T]) MethodNotAllowed(err ...any) error {
 	return response.HTTPError(err...).MethodNotAllowed()
 }
 
-func (r *request) NotAcceptable(err ...any) error {
+func (r *request[T]) NotAcceptable(err ...any) error {
 	return response.HTTPError(err...).NotAcceptable()
 }
 
-func (r *request) ProxyAuthRequired(err ...any) error {
+func (r *request[T]) ProxyAuthRequired(err ...any) error {
 	return response.HTTPError(err...).ProxyAuthRequired()
 }
 
-func (r *request) RequestTimeout(err ...any) error {
+func (r *request[T]) RequestTimeout(err ...any) error {
 	return response.HTTPError(err...).RequestTimeout()
 }
 
-func (r *request) Conflict(err ...any) error {
+func (r *request[T]) Conflict(err ...any) error {
 	return response.HTTPError(err...).Conflict()
 }
 
-func (r *request) Gone(err ...any) error {
+func (r *request[T]) Gone(err ...any) error {
 	return response.HTTPError(err...).Gone()
 }
 
-func (r *request) LengthRequired(err ...any) error {
+func (r *request[T]) LengthRequired(err ...any) error {
 	return response.HTTPError(err...).LengthRequired()
 }
 
-func (r *request) PreconditionFailed(err ...any) error {
+func (r *request[T]) PreconditionFailed(err ...any) error {
 	return response.HTTPError(err...).PreconditionFailed()
 }
 
-func (r *request) RequestEntityTooLarge(err ...any) error {
+func (r *request[T]) RequestEntityTooLarge(err ...any) error {
 	return response.HTTPError(err...).RequestEntityTooLarge()
 }
 
-func (r *request) RequestURITooLong(err ...any) error {
+func (r *request[T]) RequestURITooLong(err ...any) error {
 	return response.HTTPError(err...).RequestURITooLong()
 }
 
-func (r *request) UnsupportedMediaType(err ...any) error {
+func (r *request[T]) UnsupportedMediaType(err ...any) error {
 	return response.HTTPError(err...).UnsupportedMediaType()
 }
 
-func (r *request) RequestedRangeNotSatisfiable(err ...any) error {
+func (r *request[T]) RequestedRangeNotSatisfiable(err ...any) error {
 	return response.HTTPError(err...).RequestedRangeNotSatisfiable()
 }
 
-func (r *request) SessionExpired(err ...any) error {
+func (r *request[T]) SessionExpired(err ...any) error {
 	return response.HTTPError(err...).SessionExpired()
 }
 
-func (r *request) ExpectationFailed(err ...any) error {
+func (r *request[T]) ExpectationFailed(err ...any) error {
 	return response.HTTPError(err...).ExpectationFailed()
 }
 
-func (r *request) MisdirectedRequest(err ...any) error {
+func (r *request[T]) MisdirectedRequest(err ...any) error {
 	return response.HTTPError(err...).MisdirectedRequest()
 }
 
-func (r *request) UnprocessableEntity(err ...any) error {
+func (r *request[T]) UnprocessableEntity(err ...any) error {
 	return response.HTTPError(err...).UnprocessableEntity()
 }
 
-func (r *request) Locked(err ...any) error {
+func (r *request[T]) Locked(err ...any) error {
 	return response.HTTPError(err...).Locked()
 }
 
-func (r *request) FailedDependency(err ...any) error {
+func (r *request[T]) FailedDependency(err ...any) error {
 	return response.HTTPError(err...).FailedDependency()
 }
 
-func (r *request) TooEarly(err ...any) error {
+func (r *request[T]) TooEarly(err ...any) error {
 	return response.HTTPError(err...).TooEarly()
 }
 
-func (r *request) UpgradeRequired(err ...any) error {
+func (r *request[T]) UpgradeRequired(err ...any) error {
 	return response.HTTPError(err...).UpgradeRequired()
 }
 
-func (r *request) PreconditionRequired(err ...any) error {
+func (r *request[T]) PreconditionRequired(err ...any) error {
 	return response.HTTPError(err...).PreconditionRequired()
 }
 
-func (r *request) TooManyRequests(err ...any) error {
+func (r *request[T]) TooManyRequests(err ...any) error {
 	return response.HTTPError(err...).TooManyRequests()
 }
 
-func (r *request) RequestHeaderFieldsTooLarge(err ...any) error {
+func (r *request[T]) RequestHeaderFieldsTooLarge(err ...any) error {
 	return response.HTTPError(err...).RequestHeaderFieldsTooLarge()
 }
 
-func (r *request) UnavailableForLegalReasons(err ...any) error {
+func (r *request[T]) UnavailableForLegalReasons(err ...any) error {
 	return response.HTTPError(err...).UnavailableForLegalReasons()
 }
 
-func (r *request) InternalServerError(err ...any) error {
+func (r *request[T]) InternalServerError(err ...any) error {
 	return response.HTTPError(err...).InternalServerError()
 }
 
-func (r *request) NotImplemented(err ...any) error {
+func (r *request[T]) NotImplemented(err ...any) error {
 	return response.HTTPError(err...).NotImplemented()
 }
 
-func (r *request) BadGateway(err ...any) error {
+func (r *request[T]) BadGateway(err ...any) error {
 	return response.HTTPError(err...).BadGateway()
 }
 
-func (r *request) ServiceUnavailable(err ...any) error {
+func (r *request[T]) ServiceUnavailable(err ...any) error {
 	return response.HTTPError(err...).ServiceUnavailable()
 }
 
-func (r *request) GatewayTimeout(err ...any) error {
+func (r *request[T]) GatewayTimeout(err ...any) error {
 	return response.HTTPError(err...).GatewayTimeout()
 }
 
-func (r *request) HTTPVersionNotSupported(err ...any) error {
+func (r *request[T]) HTTPVersionNotSupported(err ...any) error {
 	return response.HTTPError(err...).HTTPVersionNotSupported()
 }
 
-func (r *request) VariantAlsoNegotiates(err ...any) error {
+func (r *request[T]) VariantAlsoNegotiates(err ...any) error {
 	return response.HTTPError(err...).VariantAlsoNegotiates()
 }
 
-func (r *request) InsufficientStorage(err ...any) error {
+func (r *request[T]) InsufficientStorage(err ...any) error {
 	return response.HTTPError(err...).InsufficientStorage()
 }
 
-func (r *request) LoopDetected(err ...any) error {
+func (r *request[T]) LoopDetected(err ...any) error {
 	return response.HTTPError(err...).LoopDetected()
 }
 
-func (r *request) NotExtended(err ...any) error {
+func (r *request[T]) NotExtended(err ...any) error {
 	return response.HTTPError(err...).NotExtended()
 }
 
-func (r *request) NetworkAuthenticationRequired(err ...any) error {
+func (r *request[T]) NetworkAuthenticationRequired(err ...any) error {
 	return response.HTTPError(err...).NetworkAuthenticationRequired()
 }
