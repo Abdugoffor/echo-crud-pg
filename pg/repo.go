@@ -1,6 +1,8 @@
 package pg
 
 import (
+	"math"
+
 	"git.sriss.uz/shared/shared_service/request"
 	"git.sriss.uz/shared/shared_service/response"
 	"gorm.io/gorm"
@@ -41,15 +43,16 @@ func page[T any, E any](db *gorm.DB, paginate *request.Paginate, filter ...Filte
 func pageResult[T any](pageEntities []pageEntity[T], paginate *request.Paginate) *response.PageData[T] {
 	var (
 		total      int64
-		totalPages int64 = int64(len(pageEntities))
+		totalPages int64
 	)
 
-	if totalPages > 0 {
+	if len(pageEntities) > 0 {
 		pageEntity := pageEntities[0]
 		total = pageEntity.Total
+		totalPages = int64(math.Ceil(float64(total) / float64(paginate.Limit())))
 	}
 
-	entities := make([]T, 0, totalPages)
+	entities := make([]T, 0, len(pageEntities))
 	{
 		for _, pageEntity := range pageEntities {
 			entities = append(entities, pageEntity.Data)
