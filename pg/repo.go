@@ -184,7 +184,7 @@ func Delete[T any](db *gorm.DB, entity *T, filter Filter, columns ...string) err
 }
 
 func FindOneWithScan[T any, E any](db *gorm.DB, filter ...Filter) (*E, error) {
-	var entity E
+	var entity = new(E)
 	{
 		result := query[T](db, filter...).Scan(&entity)
 		{
@@ -199,7 +199,7 @@ func FindOneWithScan[T any, E any](db *gorm.DB, filter ...Filter) (*E, error) {
 
 	}
 
-	return &entity, nil
+	return entity, nil
 }
 
 func FindWithScan[T any, E any](db *gorm.DB, filter ...Filter) ([]E, error) {
