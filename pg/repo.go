@@ -139,7 +139,7 @@ func Update[T any, E any](db *gorm.DB, dto E, filter Filter, columns ...string) 
 	model := new(T)
 	{
 
-		result := tx.Model(&model).Scopes(filter).Updates(dto)
+		result := tx.Model(model).Scopes(filter).Updates(dto)
 		{
 			if err := result.Error; err != nil {
 				return nil, err
@@ -165,11 +165,11 @@ func Delete[T any](db *gorm.DB, entity *T, filter Filter, columns ...string) err
 		}
 	}
 
-	if entity != nil {
+	if entity == nil {
 		entity = new(T)
 	}
 
-	result := query[T](tx, filter).Delete(&entity)
+	result := query[T](tx, filter).Delete(entity)
 	{
 		if err := result.Error; err != nil {
 			return err
