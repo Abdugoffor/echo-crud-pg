@@ -3,6 +3,7 @@ package chromium
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"sync"
@@ -12,9 +13,14 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
+var (
+	mutex sync.Mutex
+)
+
 type ChromiumService interface {
 	GenSvg(ctx context.Context, url string) (string, error)
 	Run(writer io.Writer, url string) (string, error)
+	PdfRend(url string) (io.Reader, error)
 	Close()
 	Ctx() context.Context
 }
@@ -166,4 +172,70 @@ func (c *chromiumService) Run(writer io.Writer, url string) (string, error) {
 	// Логируем время выполнения
 	log.Printf("Time taken: %v\n", time.Since(now))
 	return "", nil
+}
+
+func (c *chromiumService) PdfRend(url string) (io.Reader, error) {
+
+	start := time.Now()
+	log.Printf("Starting PdfRender for URL %s", url)
+
+	tabCtx, cancel := chromedp.NewContext(c.chromedpCtx)
+	{
+		defer cancel()
+	}
+
+	ctx, cancel := context.WithTimeout(tabCtx, 30*time.Second)
+	{
+		defer cancel()
+	}
+
+	err := chromedp.Run(ctx, chromedp.EmulateViewport(1280, 720))
+	{
+		if err != nil {
+			log.Printf("Failed to set viewport for URL %s: %v", url, err)
+			return nil, fmt.Errorf("failed to set viewport: %w", err)
+		}
+	}
+
+	var pdfData []byte
+	{
+		mutex.Lock()
+		navStart := time.Now()
+
+		if err := chromedp.Run(
+			ctx,
+			chromedp.Navigate(url),
+			chromedp.WaitVisible("body", chromedp.ByQuery),
+
+			chromedp.ActionFunc(
+				func(ctx context.Context) error {
+
+					log.Printf("Navigation completed for URL %s in %v", url, time.Since(navStart))
+
+					pdfStart := time.Now()
+					data, _, err := page.
+						PrintToPDF().
+						WithPrintBackground(true).
+						WithLandscape(false).
+						Do(ctx)
+					if err != nil {
+						return fmt.Errorf("failed to generate PDF: %w", err)
+					}
+					pdfData = data
+
+					log.Printf("PDF generation completed for URL %s in %v", url, time.Since(pdfStart))
+
+					return nil
+				}),
+		); err != nil {
+			log.Printf("Failed to navigate to URL %s: %v", url, err)
+			return nil, fmt.Errorf("failed to navigate: %w", err)
+		}
+
+		mutex.Unlock()
+	}
+
+	log.Printf("PdfRender completed for URL %s in %v", url, time.Since(start))
+
+	return bytes.NewReader(pdfData), nil
 }
