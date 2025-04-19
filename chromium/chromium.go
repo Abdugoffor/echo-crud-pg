@@ -16,6 +16,7 @@ type ChromiumService interface {
 	GenSvg(ctx context.Context, url string) (string, error)
 	Run(writer io.Writer, url string) (string, error)
 	Close()
+	Ctx() context.Context
 }
 
 type chromiumService struct {
@@ -24,6 +25,11 @@ type chromiumService struct {
 
 	chromedpCtx    context.Context
 	chromedpCancel context.CancelFunc
+}
+
+// TODO: I'll remove it after I try my work
+func (c *chromiumService) Ctx() context.Context {
+	return c.chromedpCtx
 }
 
 func New() (ChromiumService, error) {
