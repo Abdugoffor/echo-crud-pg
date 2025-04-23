@@ -64,7 +64,7 @@ func CamelCaseUnsafe(input string) string {
 	}
 
 	return *(*string)(unsafe.Pointer(&outBytes))
-	return ""
+	//return ""
 }
 
 func CamelCaseUnsafe2(input string) string {
