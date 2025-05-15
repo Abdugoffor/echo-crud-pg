@@ -1,7 +1,9 @@
 package pg
 
 import (
+	"context"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -41,7 +43,6 @@ func IsTx(db *gorm.DB) bool {
 }
 
 func Transaction(db *gorm.DB, fn func(tx *gorm.DB) error) error {
-
 	tx := db
 	{
 		if !IsTx(tx) {
@@ -62,4 +63,30 @@ func Transaction(db *gorm.DB, fn func(tx *gorm.DB) error) error {
 	}
 
 	return tx.Commit().Error
+}
+
+type Point struct {
+	Longitude float64 `json:"longitude"`
+	Latitude  float64 `json:"latitude"`
+}
+
+func (Point) GormDataType() string {
+	return "POINT"
+}
+
+func (p Point) GormValue(ctx context.Context, db *gorm.DB) clause.Expr {
+	return gorm.Expr("POINT(?, ?)", p.Longitude, p.Latitude)
+}
+
+func (p *Point) Scan(v any) error {
+	switch val := v.(type) {
+	case string:
+		_, err := fmt.Sscanf(val, "(%f,%f)", &p.Longitude, &p.Latitude)
+		return err
+	case []byte:
+		_, err := fmt.Sscanf(string(val), "(%f,%f)", &p.Longitude, &p.Latitude)
+		return err
+	default:
+		return fmt.Errorf("unsupported type: %T", v)
+	}
 }
