@@ -85,7 +85,7 @@ func Find[T any](db *gorm.DB, filter ...Filter) ([]T, error) {
 	{
 		if err := query[T](db, filter...).
 			Find(&entites).Error; err != nil {
-			return nil, err
+			return []T{}, err
 		}
 	}
 
@@ -208,7 +208,7 @@ func FindWithScan[T any, E any](db *gorm.DB, filter ...Filter) ([]E, error) {
 		result := query[T](db, filter...).Scan(&entites)
 		{
 			if err := result.Error; err != nil {
-				return nil, err
+				return []E{}, err
 			}
 		}
 
