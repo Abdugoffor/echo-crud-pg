@@ -7,12 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gitea.avtomig.uz/shared/shared_service/sharedutil"
-	"gitea.avtomig.uz/shared/shared_service/version/parser"
+	"git.sriss.uz/shared/shared_service/sharedutil"
+	"git.sriss.uz/shared/shared_service/version/parser"
 )
 
 func main() {
-
 	var (
 		dir        string
 		work       bool
@@ -62,7 +61,6 @@ func main() {
 			println(path.Join(TrimPrefix(), "go.mod update"), "->", newVersion)
 		}
 	}
-
 }
 
 func TrimPrefix() string {

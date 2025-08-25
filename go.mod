@@ -3,7 +3,6 @@ module git.sriss.uz/shared/shared_service
 go 1.24.1
 
 require (
-	gitea.avtomig.uz/shared/shared_service v0.0.0-20250314215610-97a65dc15db0
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/chromedp/cdproto v0.0.0-20241022234722-4d5d5faf59fb
 	github.com/chromedp/chromedp v0.11.2
