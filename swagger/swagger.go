@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"git.sriss.uz/shared/shared_service/sharedutil"
+	"github.com/Abdugoffor/echo-crud-pg/sharedutil"
 	"github.com/labstack/echo/v4"
 )
 

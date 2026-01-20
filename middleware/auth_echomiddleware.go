@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"git.sriss.uz/shared/shared_service/jwt"
-	"git.sriss.uz/shared/shared_service/redis"
-	"git.sriss.uz/shared/shared_service/response"
+	"github.com/Abdugoffor/echo-crud-pg/jwt"
+	"github.com/Abdugoffor/echo-crud-pg/redis"
+	"github.com/Abdugoffor/echo-crud-pg/response"
 	"github.com/labstack/echo/v4"
 )
 

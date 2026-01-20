@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"git.sriss.uz/shared/shared_service/sharedutil"
-	"git.sriss.uz/shared/shared_service/version/parser"
+	"github.com/Abdugoffor/echo-crud-pg/sharedutil"
+	"github.com/Abdugoffor/echo-crud-pg/version/parser"
 )
 
 func main() {

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"git.sriss.uz/shared/shared_service/jwt"
-	"git.sriss.uz/shared/shared_service/redis"
+	"github.com/Abdugoffor/echo-crud-pg/jwt"
+	"github.com/Abdugoffor/echo-crud-pg/redis"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )

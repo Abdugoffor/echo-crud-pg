@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	"git.sriss.uz/shared/shared_service/sharedutil"
+	"github.com/Abdugoffor/echo-crud-pg/sharedutil"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

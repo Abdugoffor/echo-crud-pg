@@ -1,4 +1,4 @@
-module git.sriss.uz/shared/shared_service
+module github.com/Abdugoffor/echo-crud-pg
 
 go 1.24.1
 

@@ -3,8 +3,8 @@ package pg
 import (
 	"math"
 
-	"git.sriss.uz/shared/shared_service/request"
-	"git.sriss.uz/shared/shared_service/response"
+	"github.com/Abdugoffor/echo-crud-pg/request"
+	"github.com/Abdugoffor/echo-crud-pg/response"
 	"gorm.io/gorm"
 )
 

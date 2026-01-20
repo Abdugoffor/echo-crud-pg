@@ -6,10 +6,10 @@ import (
 	"log"
 	"os"
 
-	"git.sriss.uz/shared/shared_service/chromium"
-	"git.sriss.uz/shared/shared_service/logger"
-	"git.sriss.uz/shared/shared_service/response"
-	"git.sriss.uz/shared/shared_service/sharedutil"
+	"github.com/Abdugoffor/echo-crud-pg/chromium"
+	"github.com/Abdugoffor/echo-crud-pg/logger"
+	"github.com/Abdugoffor/echo-crud-pg/response"
+	"github.com/Abdugoffor/echo-crud-pg/sharedutil"
 	"github.com/labstack/echo/v4"
 	"github.com/xuri/excelize/v2"
 )
